@@ -6,11 +6,33 @@ using Fusion.Sockets;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
+public class Launcher : MonoBehaviour, INetworkRunnerCallbacks
 {
     [SerializeField] private NetworkPrefabRef _playerPrefab;
     private Dictionary<PlayerRef, NetworkObject> _spawnedCharacters = new Dictionary<PlayerRef, NetworkObject>();
-    private NetworkRunner _runner;
+    public static NetworkRunner _runner;
+    private const int MAXPLAYERSIZE = 2;
+    [SerializeField] private RoomPlayer roomPlayer;
+    public static Launcher Instance { get; private set; }
+    private NetworkSceneManagerDefault _networkSceneManagerDefault;
+
+    void Awake()
+    {
+        if (Instance)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        Instance = this;
+        DontDestroyOnLoad(gameObject);
+
+        _networkSceneManagerDefault = GetComponent<NetworkSceneManagerDefault>();
+    }
+    private void Start()
+    {
+        GameStateManager.Instance.ChangeState(GameStateType.Lobby);
+    }
+
     public void OnConnectedToServer(NetworkRunner runner) { }
     public void OnConnectFailed(NetworkRunner runner, NetAddress remoteAddress, NetConnectFailedReason reason) { }
     public void OnConnectRequest(NetworkRunner runner, NetworkRunnerCallbackArgs.ConnectRequest request, byte[] token) { }
@@ -38,24 +60,25 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
     public void OnInputMissing(NetworkRunner runner, PlayerRef player, NetworkInput input) { }
     public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
     {
+        GameStateManager.Instance.ChangeState(GameStateType.Matching);
         if (runner.IsServer)
         {
-            // Create a unique position for the player
+
             Vector3 spawnPosition = new Vector3((player.RawEncoded % runner.Config.Simulation.DefaultPlayers) * 3, 1, 0);
             NetworkObject networkPlayerObject = runner.Spawn(_playerPrefab, spawnPosition, Quaternion.identity, player);
-            // Keep track of the player avatars so we can remove it when they disconnect
-            _spawnedCharacters.Add(player, networkPlayerObject);
+
+            runner.Spawn(roomPlayer, Vector3.zero, Quaternion.identity, player);
+            if (RoomPlayer.Players.Count >= MAXPLAYERSIZE)
+            {
+                GameStateManager.Instance.ChangeState(GameStateType.InGame);
+                Debug.Log("GAMESTART");
+            }
         }
     }
 
     public void OnPlayerLeft(NetworkRunner runner, PlayerRef player)
     {
-        // Find and remove the players avatar
-        if (_spawnedCharacters.TryGetValue(player, out NetworkObject networkObject))
-        {
-            runner.Despawn(networkObject);
-            _spawnedCharacters.Remove(player);
-        }
+        RoomPlayer.RemovePlayer(runner, player);
     }
 
     public void OnReliableDataReceived(NetworkRunner runner, PlayerRef player, ArraySegment<byte> data) { }
@@ -76,8 +99,9 @@ public class BasicSpawner : MonoBehaviour, INetworkRunnerCallbacks
         {
             GameMode = mode,
             SessionName = "TestRoom",
-            Scene = SceneManager.GetActiveScene().buildIndex,
-            SceneManager = gameObject.AddComponent<NetworkSceneManagerDefault>()
+            SceneManager = _networkSceneManagerDefault,
+            //Scene = SceneManager.GetActiveScene().buildIndex,
+            PlayerCount = MAXPLAYERSIZE,
         });
     }
 

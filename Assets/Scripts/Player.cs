@@ -15,7 +15,6 @@ public class Player : NetworkBehaviour
     {
         NetworkObject _networkObject;
         _networkObject = GetComponent<NetworkObject>();
-        Debug.Log($"HasInputAuthority{HasInputAuthority}");
         if (HasInputAuthority)
         {
             Debug.Log("P1_camera_set");
