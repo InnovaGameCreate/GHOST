@@ -8,8 +8,8 @@ public class PlayerMovement : NetworkBehaviour
     private CinemachineVirtualCamera _virtualCamera;
     [SerializeField]
     private GameObject CameraFollow;
-    [Networked]
-    public Vector3 moveVelocity { get; set; }
+    [SerializeField]
+    private float _dashSpeed = 2;
     private void Awake()
     {
         _cc = GetComponent<NetworkCharacterControllerPrototype>();
@@ -47,19 +47,22 @@ public class PlayerMovement : NetworkBehaviour
             Vector3 velocity = Vector3.zero;
             //ˆÚ“®ŠÖŒW
             if (Input.GetKey(KeyCode.W))
-                velocity += Vector3.forward;
+                velocity += transform.forward;
 
             if (Input.GetKey(KeyCode.S))
-                velocity += Vector3.back;
+                velocity -= transform.forward;
 
             if (Input.GetKey(KeyCode.A))
-                velocity += Vector3.left;
+                velocity -= transform.right;
 
             if (Input.GetKey(KeyCode.D))
-                velocity += Vector3.right;
+                velocity += transform.right;
+
+
 
             velocity = velocity.normalized * Runner.DeltaTime;
-            moveVelocity = velocity;
+            if (Input.GetKey(KeyCode.LeftShift))
+                velocity *= _dashSpeed;
             _cc.Move(5 * velocity);
         }
 
