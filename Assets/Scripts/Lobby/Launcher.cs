@@ -41,32 +41,17 @@ public class Launcher : MonoBehaviour, INetworkRunnerCallbacks
     public void OnHostMigration(NetworkRunner runner, HostMigrationToken hostMigrationToken) { }
     public void OnInput(NetworkRunner runner, NetworkInput input)
     {
-        var data = new NetworkInputData();
-
-        if (Input.GetKey(KeyCode.W))
-            data.direction += Vector3.forward;
-
-        if (Input.GetKey(KeyCode.S))
-            data.direction += Vector3.back;
-
-        if (Input.GetKey(KeyCode.A))
-            data.direction += Vector3.left;
-
-        if (Input.GetKey(KeyCode.D))
-            data.direction += Vector3.right;
-
-        input.Set(data);
     }
     public void OnInputMissing(NetworkRunner runner, PlayerRef player, NetworkInput input) { }
     public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
     {
         GameStateManager.Instance.ChangeState(GameStateType.Matching);
-        if (runner.IsServer)
+        if (player == runner.LocalPlayer)
         {
-
+            Debug.Log("LocalPlayer");
             Vector3 spawnPosition = new Vector3((player.RawEncoded % runner.Config.Simulation.DefaultPlayers) * 3, 1, 0);
+            Debug.Log($"player{player.PlayerId}");
             NetworkObject networkPlayerObject = runner.Spawn(_playerPrefab, spawnPosition, Quaternion.identity, player);
-
             runner.Spawn(roomPlayer, Vector3.zero, Quaternion.identity, player);
             if (RoomPlayer.Players.Count >= MAXPLAYERSIZE)
             {
@@ -74,6 +59,7 @@ public class Launcher : MonoBehaviour, INetworkRunnerCallbacks
                 Debug.Log("GAMESTART");
             }
         }
+        
     }
 
     public void OnPlayerLeft(NetworkRunner runner, PlayerRef player)
@@ -109,13 +95,9 @@ public class Launcher : MonoBehaviour, INetworkRunnerCallbacks
     {
         if (_runner == null)
         {
-            if (GUI.Button(new Rect(0, 0, 200, 40), "Host"))
+            if (GUI.Button(new Rect(0, 0, 200, 40), "Shared"))
             {
-                StartGame(GameMode.Host);
-            }
-            if (GUI.Button(new Rect(0, 40, 200, 40), "Join"))
-            {
-                StartGame(GameMode.Client);
+                StartGame(GameMode.Shared);
             }
         }
     }
