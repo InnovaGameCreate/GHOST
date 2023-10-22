@@ -52,6 +52,7 @@ public class Launcher : MonoBehaviour, INetworkRunnerCallbacks
             Vector3 spawnPosition = new Vector3((player.RawEncoded % runner.Config.Simulation.DefaultPlayers) * 3, 1, 0);
             Debug.Log($"player{player.PlayerId}");
             NetworkObject networkPlayerObject = runner.Spawn(_playerPrefab, spawnPosition, Quaternion.identity, player);
+            networkPlayerObject.GetComponent<PlayerStatus>().setLocalCharacter();
             runner.Spawn(roomPlayer, Vector3.zero, Quaternion.identity, player);
             if (RoomPlayer.Players.Count >= MAXPLAYERSIZE)
             {
