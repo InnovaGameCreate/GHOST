@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Fusion;
+using InGame.Player;
 
 public class GunBase : NetworkBehaviour
 {
@@ -12,10 +13,15 @@ public class GunBase : NetworkBehaviour
     private float fireRate;//ÇPï™ä‘Ç…î≠éÀÇ∑ÇÈíeÇÃêî
     private float reloadTime;//ÉäÉçÅ[Éhéûä‘
     private bool _isFire;//èeÇë≈Ç¡ÇƒÇ¢ÇÈÇ©Ç«Ç§Ç©
+    private int _currentAmmo;//åªç›ÇÃíeÇÃêî
     [SerializeField]
     private GameObject _bulletPrefab;
     [SerializeField]
     private float bulletSpeed;
+    private PlayerFire _playerFire;
+    [SerializeField]
+    NetworkFPSController _networkFPSController;
+    [Networked] private TickTimer callTime { get; set; }
     void Start()
     {
         if (!HasStateAuthority) return;
@@ -23,7 +29,10 @@ public class GunBase : NetworkBehaviour
         damage = _gunData.damage;
         fireRate = _gunData.fireRate;
         reloadTime = _gunData.reloadTime;
-        StartCoroutine(FireControll());
+
+        _playerFire = gameObject.transform.root.GetComponent<PlayerFire>();
+        _playerFire.setGunBase(this);
+        _currentAmmo = ammo;
     }
     public void OpenFire()
     {
@@ -32,35 +41,40 @@ public class GunBase : NetworkBehaviour
     public void StopFire()
     {
         _isFire = false;
+        _networkFPSController.OnFireReleased();
     }
 
-    IEnumerator FireControll()
+    public override void FixedUpdateNetwork()
     {
-        int currentAmmo = ammo;
-        while (true)
+        if (HasInputAuthority)
         {
-            yield return new WaitUntil(() => _isFire);
-            InstanceBulletPrefab();
-            currentAmmo--;
-            Debug.Log($"écÇËécíiêî{currentAmmo}");
-            if (currentAmmo > 0)
-                yield return new WaitForSeconds(60 / fireRate);
-            else
+            if(_isFire && callTime.ExpiredOrNotRunning(Runner))
             {
-                yield return new WaitForSeconds(reloadTime);
-                currentAmmo = ammo;
+                InstanceBulletPrefab();
+                _currentAmmo--;
+                if (_currentAmmo > 0)
+                {
+                    _networkFPSController.Fire();
+                    callTime = TickTimer.CreateFromSeconds(Runner, 60 / fireRate);
+                }
+                else
+                {
+                    _networkFPSController.OnFireReleased();
+                    callTime = TickTimer.CreateFromSeconds(Runner, reloadTime);
+                    _currentAmmo = ammo;
+                }
             }
-
         }
     }
 
     private void InstanceBulletPrefab()
     {
+        Debug.Log("InstanceBulletPrefab");
         var Bullet = Runner.Spawn(_bulletPrefab, transform.position, Quaternion.identity, Runner.LocalPlayer);
         if(Bullet.TryGetComponent(out Bullet bulletCs))
         {
             bulletCs.dataSet(damage, bulletSpeed);
-            Bullet.GetComponent<Rigidbody>().AddForce(transform.root.forward * bulletSpeed, ForceMode.Impulse);
+            Bullet.GetComponent<Rigidbody>().AddForce(transform.forward * bulletSpeed, ForceMode.Impulse);
         }
         else
         {

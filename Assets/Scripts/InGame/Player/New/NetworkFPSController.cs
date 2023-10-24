@@ -8,48 +8,25 @@ using UnityEngine;
 using Quaternion = UnityEngine.Quaternion;
 using Vector2 = UnityEngine.Vector2;
 using Vector3 = UnityEngine.Vector3;
+using Fusion;
+using Demo.Scripts.Runtime;
 
-namespace Demo.Scripts.Runtime
+namespace InGame.Player
 {
-    public enum FPSMovementState
+    public class NetworkFPSController : FPSAnimController
     {
-        Idle,
-        Walking,
-        Running,
-        Sprinting
-    }
-
-    public enum FPSPoseState
-    {
-        Standing,
-        Crouching
-    }
-
-    public enum FPSActionState
-    {
-        None,
-        Ready,
-        Aiming,
-        PointAiming,
-    }
-
-    public enum FPSCameraState
-    {
-        Default,
-        Barrel,
-        InFront
-    }
-
-    // An example-controller class
-    public class FPSController : FPSAnimController
-    {
-        [Tab("Animation")] [Header("General")] [SerializeField]
+        [Header("General")]
+        [SerializeField]
         private Animator animator;
+        [SerializeField]
+        private PlayerRPCManager _playerManager;
+        [SerializeField]
+        private PlayerStatus _playerStatus;
 
         [SerializeField] private float turnInPlaceAngle;
         [SerializeField] private AnimationCurve turnCurve = new AnimationCurve(new Keyframe(0f, 0f));
         [SerializeField] private float turnSpeed = 1f;
-        
+
         [Header("Dynamic Motions")]
         [SerializeField] private IKAnimation aimMotionAsset;
         [SerializeField] private IKAnimation leanMotionAsset;
@@ -66,9 +43,9 @@ namespace Demo.Scripts.Runtime
         [SerializeField] [HideInInspector] private SlotLayer slotLayer;
         // Animation Layers
 
-        [Tab("Controller")] 
-        [Header("General")] 
+        [Header("General")]
         [SerializeField] private CharacterController controller;
+        private NetworkCharacterControllerPrototype netWorkcontroller;
         [SerializeField] private float gravity = 8f;
         [SerializeField] private float jumpHeight = 9f;
         private bool _isInAir = false;
@@ -77,11 +54,10 @@ namespace Demo.Scripts.Runtime
         [SerializeField] private Transform mainCamera;
         [SerializeField] private Transform cameraHolder;
         [SerializeField] private Transform firstPersonCamera;
-        [SerializeField] private Transform freeCamera;
         [SerializeField] private float sensitivity;
         [SerializeField] private Vector2 freeLookAngle;
-        
-        [Header("Movement")] 
+
+        [Header("Movement")]
         [SerializeField] private float curveLocomotionSmoothing = 2f;
         [SerializeField] private float moveSmoothing = 2f;
         [SerializeField] private float sprintSpeed = 3f;
@@ -90,12 +66,12 @@ namespace Demo.Scripts.Runtime
         [SerializeField] private float crouchRatio = 0.5f;
         private float speed;
 
-        [Tab("Weapon")] 
         [SerializeField] private List<Weapon> weapons;
         [SerializeField] private FPSCameraShake shake;
 
         private bool disableInput = false;
         private Vector2 _playerInput;
+        private bool initialize = false;
 
         // Used for free-look
         private Vector2 _freeLookInput;
@@ -110,12 +86,12 @@ namespace Demo.Scripts.Runtime
         private bool _aiming;
         private bool _freeLook;
         private bool _hasActiveAction;
-        
+
         private FPSActionState actionState;
         private FPSMovementState movementState;
         private FPSPoseState poseState;
         private FPSCameraState cameraState = FPSCameraState.Default;
-        
+
         private float originalHeight;
         private Vector3 originalCenter;
 
@@ -135,6 +111,7 @@ namespace Demo.Scripts.Runtime
 
         private void InitLayers()
         {
+            Debug.Log("InitLayers");
             InitAnimController();
 
             controller = GetComponentInChildren<CharacterController>();
@@ -145,16 +122,19 @@ namespace Demo.Scripts.Runtime
             swayLayer = GetComponentInChildren<SwayLayer>();
             slotLayer = GetComponentInChildren<SlotLayer>();
         }
-
+        private void Awake()
+        {
+            netWorkcontroller = GetComponent<NetworkCharacterControllerPrototype>();
+        }
         private void Start()
         {
             Time.timeScale = 1f;
-            
+
             Cursor.visible = false;
             Cursor.lockState = CursorLockMode.Locked;
-            
+
             speed = walkingSpeed;
-            
+
             originalHeight = controller.height;
             originalCenter = controller.center;
 
@@ -162,14 +142,15 @@ namespace Demo.Scripts.Runtime
 
             InitLayers();
             EquipWeapon();
+            initialize = true;
         }
-        
+
         private void StartWeaponChange()
         {
             DisableAim();
-            
+
             _hasActiveAction = true;
-            animator.CrossFade(UnEquip, 0.1f);
+            _playerManager.CrossFade(UnEquip, 0.1f);
         }
 
         public void SetActionActive(int isActive)
@@ -181,7 +162,7 @@ namespace Demo.Scripts.Runtime
         {
             GetGun().stagedReloadSegment++;
         }
-        
+
         public void ResetStagedState()
         {
             GetGun().stagedReloadSegment = 0;
@@ -195,22 +176,22 @@ namespace Demo.Scripts.Runtime
             var gun = weapons[_index];
 
             _bursts = gun.burstAmount;
-            
+
             StopAnimation(0.1f);
             InitWeapon(gun);
             gun.gameObject.SetActive(true);
 
-            animator.SetFloat(OverlayType, (float) gun.overlayType);
-            animator.Play(Equip);
+            _playerManager.SetFloat(OverlayType, (float)gun.overlayType);
+            _playerManager.Play(Equip);
         }
-        
+
         private void ChangeWeapon_Internal()
         {
             if (movementState == FPSMovementState.Sprinting) return;
             if (_hasActiveAction) return;
-            
+
             OnFireReleased();
-            
+
             int newIndex = _index;
             newIndex++;
             if (newIndex > weapons.Count - 1)
@@ -228,7 +209,7 @@ namespace Demo.Scripts.Runtime
         {
             _aiming = false;
             OnInputAim(_aiming);
-            
+
             actionState = FPSActionState.None;
             adsLayer.SetAds(false);
             adsLayer.SetPointAim(false);
@@ -243,7 +224,7 @@ namespace Demo.Scripts.Runtime
             {
                 //return;
             }
-            
+
             _aiming = !_aiming;
 
             if (_aiming)
@@ -268,16 +249,16 @@ namespace Demo.Scripts.Runtime
             InitAimPoint(GetGun());
         }
 
-        private void Fire()
+        public void Fire()
         {
             if (_hasActiveAction) return;
-            
+
             GetGun().OnFire();
             recoilComponent.Play();
             PlayCameraShake(shake);
         }
 
-        private void OnFirePressed()
+        public void OnFirePressed()
         {
             if (weapons.Count == 0) return;
             if (_hasActiveAction) return;
@@ -292,7 +273,7 @@ namespace Demo.Scripts.Runtime
             return weapons[_index];
         }
 
-        private void OnFireReleased()
+        public void OnFireReleased()
         {
             recoilComponent.Stop();
             _fireTimer = -1f;
@@ -324,7 +305,6 @@ namespace Demo.Scripts.Runtime
             {
                 return;
             }
-
             lookLayer.SetLayerAlpha(1f);
             adsLayer.SetLayerAlpha(1f);
             movementState = FPSMovementState.Walking;
@@ -335,7 +315,7 @@ namespace Demo.Scripts.Runtime
         private void Crouch()
         {
             //todo: crouching implementation
-            
+
             float crouchedHeight = originalHeight * crouchRatio;
             float heightDifference = originalHeight - crouchedHeight;
 
@@ -351,7 +331,7 @@ namespace Demo.Scripts.Runtime
             lookLayer.SetPelvisWeight(0f);
 
             poseState = FPSPoseState.Crouching;
-            animator.SetBool(Crouching, true);
+            _playerManager.SetBool(Crouching, true);
             slotLayer.PlayMotion(crouchMotionAsset);
         }
 
@@ -366,7 +346,7 @@ namespace Demo.Scripts.Runtime
             lookLayer.SetPelvisWeight(1f);
 
             poseState = FPSPoseState.Standing;
-            animator.SetBool(Crouching, false);
+            _playerManager.SetBool(Crouching, false);
             slotLayer.PlayMotion(unCrouchMotionAsset);
         }
 
@@ -377,10 +357,10 @@ namespace Demo.Scripts.Runtime
             var reloadClip = GetGun().reloadClip;
 
             if (reloadClip == null) return;
-            
+
             OnFireReleased();
             //DisableAim();
-            
+
             PlayAnimation(reloadClip);
             GetGun().Reload();
         }
@@ -390,7 +370,7 @@ namespace Demo.Scripts.Runtime
             if (movementState == FPSMovementState.Sprinting || _hasActiveAction) return;
 
             if (GetGun().grenadeClip == null) return;
-                
+
             OnFireReleased();
             DisableAim();
             PlayAnimation(GetGun().grenadeClip);
@@ -400,9 +380,9 @@ namespace Demo.Scripts.Runtime
         {
             smoothCurveAlpha = FPSAnimLib.ExpDecay(smoothCurveAlpha, _aiming ? 0.4f : 1f, 10,
                 Time.deltaTime);
-            
-            animator.SetLayerWeight(3, smoothCurveAlpha);
-            
+
+            _playerManager.SetLayerWeight(3, smoothCurveAlpha);
+
             if (Input.GetKeyDown(KeyCode.R))
             {
                 TryReload();
@@ -439,7 +419,7 @@ namespace Demo.Scripts.Runtime
             {
                 return;
             }
-            
+
             if (actionState != FPSActionState.Ready)
             {
                 if (Input.GetKeyDown(KeyCode.Q) || Input.GetKeyUp(KeyCode.Q)
@@ -456,7 +436,7 @@ namespace Demo.Scripts.Runtime
                 {
                     charAnimData.leanDirection = -1;
                 }
-
+                /*
                 if (Input.GetKeyDown(KeyCode.Mouse0))
                 {
                     OnFirePressed();
@@ -465,7 +445,7 @@ namespace Demo.Scripts.Runtime
                 if (Input.GetKeyUp(KeyCode.Mouse0))
                 {
                     OnFireReleased();
-                }
+                }*/
 
                 if (Input.GetKeyDown(KeyCode.Mouse1))
                 {
@@ -539,29 +519,29 @@ namespace Demo.Scripts.Runtime
                 if (!isTurning)
                 {
                     turnProgress = 0f;
-                    
-                    animator.ResetTrigger(TurnRight);
-                    animator.ResetTrigger(TurnLeft);
-                    
-                    animator.SetTrigger(sign > 0f ? TurnRight : TurnLeft);
+
+                    _playerManager.ResetTrigger(TurnRight);
+                    _playerManager.ResetTrigger(TurnLeft);
+
+                    _playerManager.SetTrigger(sign > 0f ? TurnRight : TurnLeft);
                 }
-                
+
                 isTurning = true;
             }
 
             transform.rotation *= Quaternion.Euler(0f, turnInput, 0f);
-            
+
             float lastProgress = turnCurve.Evaluate(turnProgress);
             turnProgress += Time.deltaTime * turnSpeed;
             turnProgress = Mathf.Min(turnProgress, 1f);
-            
+
             float deltaProgress = turnCurve.Evaluate(turnProgress) - lastProgress;
 
             _playerInput.x -= sign * turnInPlaceAngle * deltaProgress;
-            
+
             transform.rotation *= Quaternion.Slerp(Quaternion.identity,
                 Quaternion.Euler(0f, sign * turnInPlaceAngle, 0f), deltaProgress);
-            
+
             if (Mathf.Approximately(turnProgress, 1f) && isTurning)
             {
                 isTurning = false;
@@ -591,10 +571,10 @@ namespace Demo.Scripts.Runtime
             }
 
             _freeLookInput = FPSAnimLib.ExpDecay(_freeLookInput, Vector2.zero, 15f, Time.deltaTime);
-            
+
             _playerInput.x += deltaMouseX;
             _playerInput.y += deltaMouseY;
-            
+
             _playerInput.y = Mathf.Clamp(_playerInput.y, -90f, 90f);
             moveRotation *= Quaternion.Euler(0f, deltaMouseX, 0f);
             TurnInPlace();
@@ -606,7 +586,7 @@ namespace Demo.Scripts.Runtime
             transform.rotation = Quaternion.Slerp(transform.rotation, moveRotation, _jumpState);
             _playerInput.x *= 1f - moveWeight;
             _playerInput.x *= 1f - _jumpState;
-            
+
             charAnimData.SetAimInput(_playerInput);
             charAnimData.AddDeltaInput(new Vector2(deltaMouseX, charAnimData.deltaAimInput.y));
         }
@@ -614,7 +594,7 @@ namespace Demo.Scripts.Runtime
         private void UpdateFiring()
         {
             if (recoilComponent == null) return;
-            
+
             if (recoilComponent.fireMode != FireMode.Semi && _fireTimer >= 60f / GetGun().fireRate)
             {
                 Fire();
@@ -655,24 +635,34 @@ namespace Demo.Scripts.Runtime
 
         private void UpdateMovement()
         {
-            float moveX = Input.GetAxisRaw("Horizontal");
-            float moveY = Input.GetAxisRaw("Vertical");
+            Vector3 velocity = Vector3.zero;
+            if (Input.GetKey(KeyCode.W))
+                velocity += transform.forward;
 
-            charAnimData.moveInput = new Vector2(moveX, moveY);
+            if (Input.GetKey(KeyCode.S))
+                velocity -= transform.forward;
 
-            moveX *= 1f - _jumpState;
-            moveY *= 1f - _jumpState;
+            if (Input.GetKey(KeyCode.A))
+                velocity -= transform.right;
 
-            Vector2 rawInput = new Vector2(moveX, moveY);
-            Vector2 normInput = new Vector2(moveX, moveY);
+            if (Input.GetKey(KeyCode.D))
+                velocity += transform.right;
+            velocity = velocity.normalized;
+
+            charAnimData.moveInput = new Vector2(velocity.x, velocity.y);
+
+            velocity *= 1f - _jumpState;
+
+            Vector2 rawInput = new Vector2(velocity.x, velocity.y);
+            Vector2 normInput = new Vector2(velocity.x, velocity.y);
             normInput.Normalize();
-            
-            if ((IsZero(normInput.y) || !IsZero(normInput.x)) 
+
+            if ((IsZero(normInput.y) || !IsZero(normInput.x))
                 && movementState == FPSMovementState.Sprinting)
             {
                 SprintReleased();
             }
-            
+
             if (movementState == FPSMovementState.Sprinting)
             {
                 normInput.x = rawInput.x = 0f;
@@ -680,39 +670,36 @@ namespace Demo.Scripts.Runtime
             }
 
             _smoothMove = FPSAnimLib.ExpDecay(_smoothMove, normInput, moveSmoothing, Time.deltaTime);
+            velocity.x = _smoothMove.x;
+            velocity.y = _smoothMove.y;
 
-            moveX = _smoothMove.x;
-            moveY = _smoothMove.y;
-            
             charAnimData.moveInput = normInput;
 
             _smoothAnimatorMove.x = FPSAnimLib.ExpDecay(_smoothAnimatorMove.x, rawInput.x, 5f, Time.deltaTime);
             _smoothAnimatorMove.y = FPSAnimLib.ExpDecay(_smoothAnimatorMove.y, rawInput.y, 4f, Time.deltaTime);
-            
+
             bool idle = Mathf.Approximately(0f, normInput.magnitude);
             animator.SetBool(Moving, !idle);
-            
-            smoothIsMoving = FPSAnimLib.ExpDecay(smoothIsMoving, idle ? 0f : 1f, curveLocomotionSmoothing, 
-                Time.deltaTime);
-            
-            animator.SetFloat(Velocity, Mathf.Clamp01(smoothIsMoving));
-            animator.SetFloat(MoveX, _smoothAnimatorMove.x);
-            animator.SetFloat(MoveY, _smoothAnimatorMove.y);
 
-            Vector3 move = transform.right * moveX + transform.forward * moveY;
+            smoothIsMoving = FPSAnimLib.ExpDecay(smoothIsMoving, idle ? 0f : 1f, curveLocomotionSmoothing,
+                Time.deltaTime);
+
+            _playerManager.SetFloat(Velocity, Mathf.Clamp01(smoothIsMoving));
+            _playerManager.SetFloat(MoveX, _smoothAnimatorMove.x);
+            _playerManager.SetFloat(MoveY, _smoothAnimatorMove.y);
 
             if (_isInAir)
             {
                 verticalVelocity -= gravity * Time.deltaTime;
                 verticalVelocity = Mathf.Max(-30f, verticalVelocity);
             }
-            
-            move.y = verticalVelocity;
-            controller.Move(move * speed * Time.deltaTime);
+
+            velocity.y = verticalVelocity;
+            netWorkcontroller.Move(velocity * speed * Time.deltaTime);
 
             bool bWasInAir = _isInAir;
             _isInAir = !controller.isGrounded;
-            animator.SetBool(InAir, _isInAir);
+            _playerManager.SetBool(InAir, _isInAir);
 
             if (!_isInAir)
             {
@@ -741,60 +728,35 @@ namespace Demo.Scripts.Runtime
             charAnimData.moveInput = vector2;
         }
 
+
+        public override void FixedUpdateNetwork()
+        {
+            if (!_playerStatus.isLocalPlayer) return;
+            if (initialize)
+            {
+                if (!disableInput)
+                {
+                    UpdateMovement();
+                }
+
+                UpdateAnimController();
+            }
+        }
+
         private void Update()
         {
-            if (Input.GetKeyDown(KeyCode.Escape))
-            {
-                //disableInput = !disableInput;
-                Application.Quit(0);
-            }
-
-            if (Input.GetKeyDown(KeyCode.I))
-            {
-                if (disableInput)
-                {
-                    freeCamera.gameObject.SetActive(true);
-                    mainCamera.gameObject.SetActive(false);
-                }
-                else
-                {
-                    freeCamera.gameObject.SetActive(false);
-                    mainCamera.gameObject.SetActive(true);
-                }
-            }
-
-            if (!disableInput)
+            if (!_playerStatus.isLocalPlayer) return;
+            if (!disableInput && initialize)
             {
                 UpdateActionInput();
-                UpdateLookInput();
                 UpdateFiring();
-                UpdateMovement();
+                UpdateLookInput();
             }
-            
-            UpdateAnimController();
         }
 
         private Quaternion _smoothBodyCam;
 
-        /*
-        private void ApplyBodyCamRotation()
-        {
-            Vector2 finalInput = new Vector2(_playerInput.x, _playerInput.y);
-
-            var holderOffset = Quaternion.Euler(finalInput.y, finalInput.x, 0f);
-            var headRot = firstPersonCamera.rotation;
-            var rootRot = transform.rotation * holderOffset;
-            
-            cameraHolder.rotation = Quaternion.Slerp(headRot, rootRot, stabilizationWeight);
-            cameraHolder.position = firstPersonCamera.position;
-
-            var target = cameraHolder.rotation * Quaternion.Euler(_freeLookInput.y, _freeLookInput.x, 0f);
-            _smoothBodyCam = FPSAnimLib.ExpDecay(_smoothBodyCam, target, bodyCameraSpeed, Time.deltaTime);
-            
-            mainCamera.rotation = _smoothBodyCam;
-        }
-        */
-
+     
         public void UpdateCameraRotation()
         {
             Vector2 finalInput = new Vector2(_playerInput.x, _playerInput.y);

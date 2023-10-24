@@ -781,19 +781,6 @@ MonoBehaviour:
   layerName:
     serializedVersion: 2
     m_Bits: 8
-  stepLength: 0
-  pointHeightOffset: 0
-  endPointHeightOffset: 0
-  traceStartOffset: 0
-  traceLength: 0
-  traceIterations: 0
-  testCurve:
-    serializedVersion: 2
-    m_Curve: []
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  usePredictiveModel: 0
 --- !u!114 &2115404253
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -887,7 +874,7 @@ MonoBehaviour:
     rotation: {x: -0.0845059, y: 0.16233423, z: 0.3118311, w: 0.93234533}
 --- !u!95 &4505190999055681087
 Animator:
-  serializedVersion: 4
+  serializedVersion: 5
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -910,7 +897,8 @@ Animator:
     ...\n\tFrom animation clip 'C_CurveRun'\n\tFrom animation clip 'C_CurveRun'"
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!114 &279056730
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2841,7 +2829,6 @@ GameObject:
   - component: {fileID: 6624334008321366733}
   - component: {fileID: 6624334008321366730}
   - component: {fileID: 6624334008321366731}
-  - component: {fileID: 7534324247092103155}
   - component: {fileID: 3029912240507143672}
   m_Layer: 4
   m_Name: Camera
@@ -2916,66 +2903,6 @@ AudioListener:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6624334008321366734}
   m_Enabled: 1
---- !u!114 &7534324247092103155
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6624334008321366734}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 948f4100a11a5c24981795d21301da5c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  volumeTrigger: {fileID: 6624334008321366733}
-  volumeLayer:
-    serializedVersion: 2
-    m_Bits: 80
-  stopNaNPropagation: 1
-  finalBlitToCameraTarget: 0
-  antialiasingMode: 1
-  temporalAntialiasing:
-    jitterSpread: 0.75
-    sharpness: 0.25
-    stationaryBlending: 0.95
-    motionBlending: 0.85
-  subpixelMorphologicalAntialiasing:
-    quality: 2
-  fastApproximateAntialiasing:
-    fastMode: 0
-    keepAlpha: 0
-  fog:
-    enabled: 1
-    excludeSkybox: 1
-  debugLayer:
-    lightMeter:
-      width: 512
-      height: 256
-      showCurves: 1
-    histogram:
-      width: 512
-      height: 256
-      channel: 3
-    waveform:
-      exposure: 0.12
-      height: 256
-    vectorscope:
-      size: 256
-      exposure: 0.12
-    overlaySettings:
-      linearDepth: 0
-      motionColorIntensity: 4
-      motionGridSize: 64
-      colorBlindnessType: 0
-      colorBlindnessStrength: 1
-  m_Resources: {fileID: 11400000, guid: d82512f9c8e5d4a4d938b575d47f88d4, type: 2}
-  m_ShowToolkit: 0
-  m_ShowCustomSorter: 0
-  breakBeforeColorGrading: 0
-  m_BeforeTransparentBundles: []
-  m_BeforeStackBundles: []
-  m_AfterStackBundles: []
 --- !u!114 &3029912240507143672
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2992,7 +2919,6 @@ MonoBehaviour:
   rootBone: {fileID: 0}
   isAiming: 0
   useViewLimits: 0
-  useCameraAnimation: 1
 --- !u!1 &6624334008445290586
 GameObject:
   m_ObjectHideFlags: 0

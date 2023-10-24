@@ -31,22 +31,8 @@ namespace Demo.Scripts.Runtime
         protected void Start()
         {
             _animator = GetComponentInChildren<Animator>();
-            /*
-            var animEvents = reloadClip.clip.events;
-
-            foreach (var animEvent in animEvents)
-            {
-                if (animEvent.functionName.Equals("RefreshStagedState"))
-                {
-                    _stagedSegments++;
-                }
-            }
-            
-            _animator.Play("Empty");
-            */
         }
 
-        // Returns a normalized reload time ratio
         public float GetReloadTime()
         {
             if (_stagedSegments == 0) return 0f;
@@ -68,7 +54,7 @@ namespace Demo.Scripts.Runtime
                 return;
             }
 
-            _animator.Play("Fire", 0, 0f);
+            //_animator.Play("Fire", 0, 0f);
         }
 
         public void Reload()
@@ -77,9 +63,9 @@ namespace Demo.Scripts.Runtime
             {
                 return;
             }
-            
+            /*
             _animator.Rebind();
-            _animator.Play("Reload", 0);
+            _animator.Play("Reload", 0);*/
         }
 
         public void UpdateMagVisibility(bool bVisible)
