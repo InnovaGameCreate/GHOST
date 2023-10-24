@@ -7,12 +7,12 @@ using Kinemation.FPSFramework.Runtime.Core.Types;
 using Kinemation.FPSFramework.Runtime.Layers;
 using Kinemation.FPSFramework.Runtime.Recoil;
 using UnityEngine.Events;
-
+using Fusion;
 namespace Kinemation.FPSFramework.Runtime.FPSAnimator
 {
     // Animation Controller Interface
     // Make sure to derive your controller from this class
-    public abstract class FPSAnimController : MonoBehaviour
+    public abstract class FPSAnimController : NetworkBehaviour
     {
         private CoreAnimComponent fpsAnimator;
         private FPSCamera fpsCamera;

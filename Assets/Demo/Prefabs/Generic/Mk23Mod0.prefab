@@ -96,9 +96,9 @@ MonoBehaviour:
   reloadClip: {fileID: 11400000, guid: 555679f5377209b4dafead2f716653da, type: 2}
   grenadeClip: {fileID: 0}
   overlayType: 1
+  stagedReloadSegment: 0
   scopes:
   - {fileID: 6506212990733282748}
-  _magBone: {fileID: 0}
 --- !u!1 &5480914323491122808
 GameObject:
   m_ObjectHideFlags: 0
@@ -262,7 +262,7 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
 --- !u!95 &3602806972434536129
 Animator:
-  serializedVersion: 4
+  serializedVersion: 5
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -279,7 +279,8 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!4 &2971422411046013483 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 664d4d7408d76494c988d5eccd4610eb, type: 3}
@@ -339,6 +340,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 9bd46054662bb554d8a667aad87d9247, type: 3}
       propertyPath: m_Name
       value: Pistol_Silencer
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 9bd46054662bb554d8a667aad87d9247, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9bd46054662bb554d8a667aad87d9247, type: 3}

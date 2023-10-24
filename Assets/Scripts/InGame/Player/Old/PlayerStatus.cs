@@ -8,10 +8,16 @@ public class PlayerStatus : MonoBehaviour, IDamageable
     [SerializeField]
     private float _baseHp;
     private ReactiveProperty<float> _currentHp = new ReactiveProperty<float>();
+    private ReactiveProperty<bool> _useEMP = new ReactiveProperty<bool>();
     private bool _isLocalPlayer = false;
     public IObservable<float> currentHp//_currentHp‚Ì•Ï‰»‚ª‚ ‚Á‚½‚Æ‚«‚É”­s‚³‚ê‚é
     {
         get { return _currentHp; }
+    }
+
+    public IObservable<bool> useEMP//_currentHp‚Ì•Ï‰»‚ª‚ ‚Á‚½‚Æ‚«‚É”­s‚³‚ê‚é
+    {
+        get { return _useEMP; }
     }
 
     public float maxBaseHp { get => _baseHp; }
@@ -38,6 +44,12 @@ public class PlayerStatus : MonoBehaviour, IDamageable
     public void setHp(float hp)
     {
         _currentHp.Value = hp;
+    }
+
+    public void UseEMP(bool useValue)
+    {
+        _useEMP.Value = useValue;
+        Debug.Log($"UseEMP{useValue}");
     }
 
 }

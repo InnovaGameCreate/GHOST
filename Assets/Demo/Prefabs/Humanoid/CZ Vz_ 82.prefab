@@ -492,6 +492,8 @@ GameObject:
   m_Component:
   - component: {fileID: 5167412898776914137}
   - component: {fileID: 7705639219087730087}
+  - component: {fileID: 7076253000451218431}
+  - component: {fileID: 2843205607283328585}
   m_Layer: 0
   m_Name: CZ Vz_ 82
   m_TagString: Untagged
@@ -550,6 +552,46 @@ MonoBehaviour:
   stagedReloadSegment: 0
   scopes:
   - {fileID: 6960634655421256307}
+--- !u!114 &7076253000451218431
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5547737700576969315}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 32ef1c88a9f20a041a99c81db3f7b7d8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _interpolationDataSource: 0
+  _gunData: {fileID: 11400000, guid: 6b8ba040bef57f44b894eb4c73c6d8fd, type: 2}
+  _bulletPrefab: {fileID: 6553623735259241528, guid: 08fc1632e95b4004884d9cf7d7cd66ac, type: 3}
+  bulletSpeed: 40
+--- !u!114 &2843205607283328585
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5547737700576969315}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -1552182283, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObjectInterest: 1
+  DefaultInterestGroups: []
+  DestroyWhenStateAuthorityLeaves: 0
+  AllowStateAuthorityOverride: 1
+  AoiPositionSource: {fileID: 0}
+  Flags: 2305
+  NetworkGuid:
+    RawGuidValue: b943a6c25011e124cbaf9f11eae5af44
+  NestedObjects: []
+  NetworkedBehaviours:
+  - {fileID: 7076253000451218431}
+  SimulationBehaviours: []
 --- !u!1 &6296387722432749568
 GameObject:
   m_ObjectHideFlags: 0

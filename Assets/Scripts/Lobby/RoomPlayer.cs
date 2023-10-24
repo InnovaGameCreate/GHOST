@@ -19,7 +19,6 @@ public class RoomPlayer : NetworkBehaviour
         if (Object.HasInputAuthority)
         {
             Local = this;
-            Debug.Log(Launcher._runner.GameMode);
         }
 
         Players.Add(this);

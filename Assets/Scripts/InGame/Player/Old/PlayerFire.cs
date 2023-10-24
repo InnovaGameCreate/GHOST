@@ -5,11 +5,14 @@ using Fusion;
 
 public class PlayerFire : NetworkBehaviour
 {
-    [SerializeField]
-    private GunBase _gunBase; 
+    private GunBase _gunBase;
+    public void setGunBase(GunBase _base)
+    {
+        _gunBase = _base;
+    }
     void Update()
     {
-        if(HasStateAuthority)
+        if(HasStateAuthority && _gunBase != null)
         {
             if (Input.GetKey(KeyCode.Mouse0))
                 _gunBase.OpenFire();
