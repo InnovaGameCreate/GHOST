@@ -13,7 +13,7 @@ public class PlayerUiPresenter : MonoBehaviour
     private Image _enemyCharacterHpBar;
 
 
-    void Start()
+    public void setCamera()
     {
         StartCoroutine(setPlayerStatis());
     }

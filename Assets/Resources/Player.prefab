@@ -3054,6 +3054,7 @@ MonoBehaviour:
   _interpolationDataSource: 0
   _playerStatus: {fileID: 3754977135402090887}
   animator: {fileID: 5539873124950446314}
+  _networkFPSController: {fileID: 3590755197599565692}
 --- !u!114 &3842062316817377746
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3140,7 +3141,7 @@ MonoBehaviour:
   crouchMotionAsset: {fileID: 11400000, guid: e17c7783a4255b748bf51256f0ae18c6, type: 2}
   unCrouchMotionAsset: {fileID: 11400000, guid: 2201ebb031bed8249a648b1e4a66b39d, type: 2}
   onJumpMotionAsset: {fileID: 11400000, guid: 3802f713565b150488506dd04aa04ea2, type: 2}
-  onLandedMotionAsset: {fileID: 11400000, guid: ba2e1a2496024db428982ac4e189d5e2, type: 2}
+  onLandedMotionAsset: {fileID: 11400000, guid: dafa5bd76c09ec246bdf49fd3b3f4314, type: 2}
   lookLayer: {fileID: 0}
   adsLayer: {fileID: 0}
   swayLayer: {fileID: 0}
@@ -3155,14 +3156,15 @@ MonoBehaviour:
   sensitivity: 2
   freeLookAngle: {x: 60, y: 60}
   curveLocomotionSmoothing: 2
-  moveSmoothing: 2
+  moveSmoothing: 10
   sprintSpeed: 3
   walkingSpeed: 2
   crouchSpeed: 1
   crouchRatio: 0.5
   weapons:
-  - {fileID: 1481410426209141056}
+  - {fileID: 6543948007039811739}
   shake: {fileID: 11400000, guid: ce574d2150fc1f540a612314d3d6662e, type: 2}
+  actionState: 0
 --- !u!143 &2993326637446204196
 CharacterController:
   m_ObjectHideFlags: 0
@@ -3928,17 +3930,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e1438d518dbd3a342a3d7bca9295d4db, type: 3}
---- !u!114 &1481410426209141056 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4720054333846582, guid: e1438d518dbd3a342a3d7bca9295d4db, type: 3}
-  m_PrefabInstance: {fileID: 1486119923219576182}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7298917152003861094}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cd79974665c90734d9bd7ff5a68cba63, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &7298917152003861094 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8202519781225537296, guid: e1438d518dbd3a342a3d7bca9295d4db, type: 3}
@@ -3960,7 +3951,6 @@ MonoBehaviour:
   _gunData: {fileID: 11400000, guid: bf75f2ec64d8bab4bb7dba60f3d53390, type: 2}
   _bulletPrefab: {fileID: 6553623735259241528, guid: 08fc1632e95b4004884d9cf7d7cd66ac, type: 3}
   bulletSpeed: 40
-  _animator: {fileID: 0}
   _networkFPSController: {fileID: 3590755197599565692}
 --- !u!114 &6789479244145498518
 MonoBehaviour:
@@ -4073,7 +4063,6 @@ MonoBehaviour:
   _gunData: {fileID: 11400000, guid: bf75f2ec64d8bab4bb7dba60f3d53390, type: 2}
   _bulletPrefab: {fileID: 6553623735259241528, guid: 08fc1632e95b4004884d9cf7d7cd66ac, type: 3}
   bulletSpeed: 40
-  _animator: {fileID: 0}
   _networkFPSController: {fileID: 3590755197599565692}
 --- !u!114 &5029934749534865241
 MonoBehaviour:
@@ -4217,6 +4206,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 32ef1c88a9f20a041a99c81db3f7b7d8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &6543948007039811739 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7705639219087730087, guid: b943a6c25011e124cbaf9f11eae5af44, type: 3}
+  m_PrefabInstance: {fileID: 3476541424817743164}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cd79974665c90734d9bd7ff5a68cba63, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!4 &8613555016410578405 stripped
@@ -4375,7 +4375,6 @@ MonoBehaviour:
   _gunData: {fileID: 11400000, guid: bf75f2ec64d8bab4bb7dba60f3d53390, type: 2}
   _bulletPrefab: {fileID: 6553623735259241528, guid: 08fc1632e95b4004884d9cf7d7cd66ac, type: 3}
   bulletSpeed: 40
-  _animator: {fileID: 0}
   _networkFPSController: {fileID: 3590755197599565692}
 --- !u!4 &6489848514797809476 stripped
 Transform:

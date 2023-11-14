@@ -53,8 +53,6 @@ namespace Demo.Scripts.Runtime
             {
                 return;
             }
-
-            //_animator.Play("Fire", 0, 0f);
         }
 
         public void Reload()
@@ -63,16 +61,6 @@ namespace Demo.Scripts.Runtime
             {
                 return;
             }
-            /*
-            _animator.Rebind();
-            _animator.Play("Reload", 0);*/
-        }
-
-        public void UpdateMagVisibility(bool bVisible)
-        {
-            //if (magBone == null) return;
-
-            //magBone.transform.localScale = bVisible ? Vector3.one : Vector3.zero;
         }
     }
 }

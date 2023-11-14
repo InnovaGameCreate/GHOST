@@ -1,6 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using DG.Tweening;
 
 public class EMPEffectEmitter : MonoBehaviour
 {
@@ -8,6 +10,10 @@ public class EMPEffectEmitter : MonoBehaviour
     private GameObject _empEffects;
     [SerializeField]
     private GameObject _useText;
+    [SerializeField]
+    private Image p1Image;
+    [SerializeField]
+    private Image p2Image;
 
     public static EMPEffectEmitter Instance { get; private set; }
     private void Awake()
@@ -30,13 +36,40 @@ public class EMPEffectEmitter : MonoBehaviour
     {
         _empEffects.SetActive(false);
     }
-
-    public void DisplayUseText()
+    /// <summary>
+    /// empを使っていることを知らせるテキスト
+    /// </summary>
+    public void DisplayUseText(bool value)
     {
-        _useText.SetActive(true);
+        _useText.SetActive(value);
     }
-    public void HideUseText()
+
+    /// <summary>
+    /// プレイヤーが死んだときのエフェクト
+    /// </summary>
+    public void DeadEffect(bool isP1,bool value)
     {
-        _useText.SetActive(false);
+        if (isP1)
+        {
+            if(value)
+            {
+                p1Image.DOFade(1, 2f).SetEase(Ease.InOutSine);
+            }
+            else
+            {
+                p1Image.DOFade(0, 2f).SetEase(Ease.InOutSine);
+            }
+        }
+        else
+        {
+            if (value)
+            {
+                p2Image.DOFade(1, 2f).SetEase(Ease.InOutSine);
+            }
+            else
+            {
+                p2Image.DOFade(0, 2f).SetEase(Ease.InOutSine);
+            }
+        }
     }
 }

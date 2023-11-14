@@ -87,7 +87,7 @@ namespace InGame.Player
         private bool _freeLook;
         private bool _hasActiveAction;
 
-        private FPSActionState actionState;
+        public FPSActionState actionState;
         private FPSMovementState movementState;
         private FPSPoseState poseState;
         private FPSCameraState cameraState = FPSCameraState.Default;
@@ -210,12 +210,12 @@ namespace InGame.Player
             _aiming = false;
             OnInputAim(_aiming);
 
-            actionState = FPSActionState.None;
+            _playerManager.SetActionState(FPSActionState.None);
             adsLayer.SetAds(false);
             adsLayer.SetPointAim(false);
             swayLayer.SetFreeAimEnable(true);
             swayLayer.SetLayerAlpha(1f);
-            slotLayer.PlayMotion(aimMotionAsset);
+            _playerManager.PlayMotionAsset(aimMotionAsset);
         }
 
         public void ToggleAim()
@@ -229,11 +229,11 @@ namespace InGame.Player
 
             if (_aiming)
             {
-                actionState = FPSActionState.Aiming;
+                _playerManager.SetActionState(FPSActionState.Aiming);
                 adsLayer.SetAds(true);
                 swayLayer.SetFreeAimEnable(false);
                 swayLayer.SetLayerAlpha(0.3f);
-                slotLayer.PlayMotion(aimMotionAsset);
+                _playerManager.PlayMotionAsset(aimMotionAsset);
                 OnInputAim(_aiming);
             }
             else
@@ -292,7 +292,7 @@ namespace InGame.Player
             locoLayer.SetReadyWeight(0f);
 
             movementState = FPSMovementState.Sprinting;
-            actionState = FPSActionState.None;
+            _playerManager.SetActionState(FPSActionState.None);
 
             recoilComponent.Stop();
 
@@ -332,7 +332,7 @@ namespace InGame.Player
 
             poseState = FPSPoseState.Crouching;
             _playerManager.SetBool(Crouching, true);
-            slotLayer.PlayMotion(crouchMotionAsset);
+            _playerManager.PlayMotionAsset(crouchMotionAsset);
         }
 
         private void Uncrouch()
@@ -347,7 +347,7 @@ namespace InGame.Player
 
             poseState = FPSPoseState.Standing;
             _playerManager.SetBool(Crouching, false);
-            slotLayer.PlayMotion(unCrouchMotionAsset);
+            _playerManager.PlayMotionAsset(crouchMotionAsset);
         }
 
         private void TryReload()
@@ -398,7 +398,7 @@ namespace InGame.Player
                 StopAnimation(0.2f);
             }
 
-            charAnimData.leanDirection = 0;
+            _playerManager.SetLeanDirection(0);
 
             if (Input.GetKeyDown(KeyCode.LeftShift))
             {
@@ -425,27 +425,17 @@ namespace InGame.Player
                 if (Input.GetKeyDown(KeyCode.Q) || Input.GetKeyUp(KeyCode.Q)
                                                 || Input.GetKeyDown(KeyCode.E) || Input.GetKeyUp(KeyCode.E))
                 {
-                    slotLayer.PlayMotion(leanMotionAsset);
+                    _playerManager.PlayMotionAsset(leanMotionAsset);
                 }
 
                 if (Input.GetKey(KeyCode.Q))
                 {
-                    charAnimData.leanDirection = 1;
+                    _playerManager.SetLeanDirection(1);
                 }
                 else if (Input.GetKey(KeyCode.E))
                 {
-                    charAnimData.leanDirection = -1;
+                    _playerManager.SetLeanDirection(-1);
                 }
-                /*
-                if (Input.GetKeyDown(KeyCode.Mouse0))
-                {
-                    OnFirePressed();
-                }
-
-                if (Input.GetKeyUp(KeyCode.Mouse0))
-                {
-                    OnFireReleased();
-                }*/
 
                 if (Input.GetKeyDown(KeyCode.Mouse1))
                 {
@@ -462,12 +452,12 @@ namespace InGame.Player
                     if (actionState == FPSActionState.PointAiming)
                     {
                         adsLayer.SetPointAim(false);
-                        actionState = FPSActionState.Aiming;
+                        _playerManager.SetActionState(FPSActionState.Aiming);
                     }
                     else
                     {
                         adsLayer.SetPointAim(true);
-                        actionState = FPSActionState.PointAiming;
+                        _playerManager.SetActionState(FPSActionState.PointAiming);
                     }
                 }
             }
@@ -488,13 +478,13 @@ namespace InGame.Player
             {
                 if (actionState == FPSActionState.Ready)
                 {
-                    actionState = FPSActionState.None;
+                    _playerManager.SetActionState(FPSActionState.None);
                     locoLayer.SetReadyWeight(0f);
                     lookLayer.SetLayerAlpha(1f);
                 }
                 else
                 {
-                    actionState = FPSActionState.Ready;
+                    _playerManager.SetActionState(FPSActionState.Ready);
                     locoLayer.SetReadyWeight(1f);
                     lookLayer.SetLayerAlpha(.5f);
                     OnFireReleased();
@@ -587,8 +577,8 @@ namespace InGame.Player
             _playerInput.x *= 1f - moveWeight;
             _playerInput.x *= 1f - _jumpState;
 
-            charAnimData.SetAimInput(_playerInput);
-            charAnimData.AddDeltaInput(new Vector2(deltaMouseX, charAnimData.deltaAimInput.y));
+            _playerManager.SetAimInput(_playerInput);
+            _playerManager.SetAddDeltaInput(new Vector2(deltaMouseX, charAnimData.deltaAimInput.y));
         }
 
         private void UpdateFiring()
@@ -649,7 +639,7 @@ namespace InGame.Player
                 velocity += transform.right;
             velocity = velocity.normalized;
 
-            charAnimData.moveInput = new Vector2(velocity.x, velocity.y);
+            _playerManager.SetMoveInput(new Vector2(velocity.x, velocity.y));
 
             velocity *= 1f - _jumpState;
 
@@ -673,13 +663,13 @@ namespace InGame.Player
             velocity.x = _smoothMove.x;
             velocity.y = _smoothMove.y;
 
-            charAnimData.moveInput = normInput;
+            _playerManager.SetMoveInput(normInput);
 
             _smoothAnimatorMove.x = FPSAnimLib.ExpDecay(_smoothAnimatorMove.x, rawInput.x, 5f, Time.deltaTime);
             _smoothAnimatorMove.y = FPSAnimLib.ExpDecay(_smoothAnimatorMove.y, rawInput.y, 4f, Time.deltaTime);
 
             bool idle = Mathf.Approximately(0f, normInput.magnitude);
-            animator.SetBool(Moving, !idle);
+            _playerManager.SetBool(Moving, !idle);
 
             smoothIsMoving = FPSAnimLib.ExpDecay(smoothIsMoving, idle ? 0f : 1f, curveLocomotionSmoothing,
                 Time.deltaTime);
@@ -695,7 +685,7 @@ namespace InGame.Player
             }
 
             velocity.y = verticalVelocity;
-            netWorkcontroller.Move(velocity * speed * Time.deltaTime);
+            netWorkcontroller.Move(velocity * speed );
 
             bool bWasInAir = _isInAir;
             _isInAir = !controller.isGrounded;
@@ -720,7 +710,7 @@ namespace InGame.Player
                     verticalVelocity = -0.5f;
                 }
 
-                slotLayer.PlayMotion(_isInAir ? onJumpMotionAsset : onLandedMotionAsset);
+                _playerManager.PlayMotionAsset(_isInAir ? onJumpMotionAsset : onLandedMotionAsset);
             }
         }
         public void setCharAnimData(Vector2 vector2)
@@ -764,20 +754,60 @@ namespace InGame.Player
                 (transform.rotation * Quaternion.Euler(finalInput.y, finalInput.x, 0f),
                     firstPersonCamera.position);
 
-            if (cameraState == FPSCameraState.InFront)
-            {
-                //cameraTransform = (frontCamera.rotation, frontCamera.position);
-            }
-
-            if (cameraState == FPSCameraState.Barrel)
-            {
-                //cameraTransform = (barrelCamera.rotation, barrelCamera.position);
-            }
-
             cameraHolder.rotation = cameraTransform.Item1;
             cameraHolder.position = cameraTransform.Item2;
 
             mainCamera.rotation = cameraHolder.rotation * Quaternion.Euler(_freeLookInput.y, _freeLookInput.x, 0f);
+        }
+
+        public void PlayMotionAsset(string animationName)
+        {
+            animationName = animationName.Replace(" (Kinemation.FPSFramework.Runtime.FPSAnimator.IKAnimation)", "");
+            IKAnimation animation = null;
+            switch (animationName)
+            {
+                case "IKAnim_Aim":
+                    animation = aimMotionAsset;
+                    break;
+                case "IKAnim_Lean":
+                    animation = leanMotionAsset;
+                    break;
+                case "IKAnim_Crouch":
+                    animation = crouchMotionAsset;
+                    break;
+                case "IKAnim_Uncrouch":
+                    animation = unCrouchMotionAsset;
+                    break;
+                case "IKAnim_Jump":
+                    animation = onJumpMotionAsset;
+                    break;
+                case "IKAnim_StopMoving":
+                    animation = onLandedMotionAsset;
+                    break;
+                default:
+                    Debug.LogWarning($"null Motion Asset.string is {animationName}");
+                    break;
+            }
+            slotLayer.PlayMotion(animation);
+        }
+
+        public void SetLeanDirection(int value)
+        {
+            charAnimData.leanDirection = value;
+        }
+        public void SetMoveInput(Vector2 value)
+        {
+            charAnimData.moveInput = value;
+        }
+
+        public void SetAimInput(Vector2 value)
+        {
+            charAnimData.SetAimInput(value);
+        }
+
+        public void SetAddDeltaInput(Vector2 value)
+        {
+            charAnimData.AddDeltaInput(value);
         }
     }
 }
