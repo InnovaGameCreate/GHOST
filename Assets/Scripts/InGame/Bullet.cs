@@ -37,19 +37,14 @@ public class Bullet : NetworkBehaviour
     private void OnTriggerEnter(Collider coll)
     {
         if (!HasStateAuthority) return;
-        Debug.Log("hitColl");
         if (coll.CompareTag("Player"))
         {
-            Debug.Log("GetPlayer");
             if (coll.TryGetComponent(out NetworkObject nerwork))
             {
-                Debug.Log("GetNetwork");
                 if (!nerwork.HasStateAuthority)
                 {
-                    Debug.Log("getEnemy");
                     if (coll.TryGetComponent(out IDamageable damageable))
                     {
-                        Debug.Log("getDamage");
                         damageable.AddDamage(damage);
                     }
                 }                

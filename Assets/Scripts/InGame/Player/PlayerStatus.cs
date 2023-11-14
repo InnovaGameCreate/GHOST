@@ -7,7 +7,7 @@ public class PlayerStatus : MonoBehaviour, IDamageable
 {
     [SerializeField]
     private float _baseHp;
-    private ReactiveProperty<float> _currentHp = new ReactiveProperty<float>();
+    private ReactiveProperty<float> _currentHp = new ReactiveProperty<float>(100);
     private ReactiveProperty<bool> _useEMP = new ReactiveProperty<bool>();
     private bool _isLocalPlayer = false;
     public IObservable<float> currentHp//_currentHp‚Ì•Ï‰»‚ª‚ ‚Á‚½‚Æ‚«‚É”­s‚³‚ê‚é

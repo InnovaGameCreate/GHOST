@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using Fusion;
 using UniRx;
+using Demo.Scripts.Runtime;
+using InGame.Player;
+using Kinemation.FPSFramework.Runtime.FPSAnimator;
 
 public class PlayerRPCManager : NetworkBehaviour
 {
@@ -10,6 +13,8 @@ public class PlayerRPCManager : NetworkBehaviour
     PlayerStatus _playerStatus;
     [SerializeField]
     private Animator animator;
+    [SerializeField]
+    NetworkFPSController _networkFPSController;
     void Start()
     {
         if (HasInputAuthority)
@@ -56,9 +61,9 @@ public class PlayerRPCManager : NetworkBehaviour
         else
         {
             if (_isUse)
-                EMPEffectEmitter.Instance.DisplayUseText();
+                EMPEffectEmitter.Instance.DisplayUseText(true);
             else
-                EMPEffectEmitter.Instance.HideUseText();
+                EMPEffectEmitter.Instance.DisplayUseText(false);
             Debug.Log("Invoke:notLocal");
         }
     }
@@ -132,5 +137,61 @@ public class PlayerRPCManager : NetworkBehaviour
     private void RPC_CrossFade(int id, float value)
     {
         animator.CrossFade(id,value);
+    }
+    public void SetActionState(FPSActionState state)
+    {
+        RPC_SetActionState(state);
+    }
+    [Rpc(RpcSources.All, RpcTargets.All)]
+    private void RPC_SetActionState(FPSActionState state)
+    {
+        _networkFPSController.actionState = state;
+    }
+    public void PlayMotionAsset(IKAnimation animation)
+    {
+        RPC_PlayMotionAsset(animation.ToString());
+    }
+    [Rpc(RpcSources.All, RpcTargets.All)]
+    private void RPC_PlayMotionAsset(string animationName)
+    {
+        _networkFPSController.PlayMotionAsset(animationName);
+    }
+
+    public void SetLeanDirection(int value)
+    {
+        RPC_SetLeanDirection(value);
+    }
+    [Rpc(RpcSources.All, RpcTargets.All)]
+    private void RPC_SetLeanDirection(int value)
+    {
+        _networkFPSController.SetLeanDirection(value);
+    }
+
+    public void SetMoveInput(Vector2 value)
+    {
+        RPC_SetMoveInput(value);
+    }
+    [Rpc(RpcSources.All, RpcTargets.All)]
+    private void RPC_SetMoveInput(Vector2 value)
+    {
+        _networkFPSController.SetMoveInput(value);
+    }
+    public void SetAimInput(Vector2 value)
+    {
+        RPC_SetAimInput(value);
+    }
+    [Rpc(RpcSources.All, RpcTargets.All)]
+    private void RPC_SetAimInput(Vector2 value)
+    {
+        _networkFPSController.SetAimInput(value);
+    }
+    public void SetAddDeltaInput(Vector2 value)
+    {
+        RPC_SetAddDeltaInput(value);
+    }
+    [Rpc(RpcSources.All, RpcTargets.All)]
+    private void RPC_SetAddDeltaInput(Vector2 value)
+    {
+        _networkFPSController.SetAddDeltaInput(value);
     }
 }
