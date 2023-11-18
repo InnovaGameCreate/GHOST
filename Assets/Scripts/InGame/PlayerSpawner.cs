@@ -14,18 +14,20 @@ public class PlayerSpawner : NetworkBehaviour
     [Networked] private TickTimer reSpawnTime { get; set; }
     [Networked] private TickTimer despawnTime { get; set; }
     NetworkObject networkPlayerObject;
+    private SpawnPoint _spawnPoint;
     private bool isAlive = false;
     PlayerUiPresenter _playerUiPresenter;
     public void SetInitialData(NetworkRunner runner, PlayerRef playerPre)
     {
         _playerUiPresenter = FindObjectOfType<PlayerUiPresenter>();
+        _spawnPoint = FindObjectOfType<SpawnPoint>();
         _runner = runner;
         _playerPref = playerPre;
         Spawn();
     }
     private void Spawn()
     {
-        networkPlayerObject = _runner.Spawn(_playerPrefab, transform.position, Quaternion.identity, _playerPref);
+        networkPlayerObject = _runner.Spawn(_playerPrefab, _spawnPoint.GetSpawnPoint(), Quaternion.identity, _playerPref);
         _playerStatus = networkPlayerObject.GetComponent<PlayerStatus>();
         _playerStatus.setLocalCharacter();
         isAlive = true;
