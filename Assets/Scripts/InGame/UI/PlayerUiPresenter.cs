@@ -13,12 +13,12 @@ public class PlayerUiPresenter : MonoBehaviour
     private Image _enemyCharacterHpBar;
 
 
-    public void setCamera()
+    public void setHpBar()
     {
-        StartCoroutine(setPlayerStatis());
+        StartCoroutine(PlayerStatus());
     }
 
-    IEnumerator setPlayerStatis()
+    IEnumerator PlayerStatus()
     {
         yield return new WaitUntil(() => set());
         _myPlayerStatus.currentHp

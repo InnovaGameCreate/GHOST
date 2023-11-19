@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Fusion;
 using InGame.Player;
+using UniRx;
 
 public class GunBase : NetworkBehaviour
 {
@@ -21,6 +22,8 @@ public class GunBase : NetworkBehaviour
     private PlayerFire _playerFire;
     [SerializeField]
     NetworkFPSController _networkFPSController;
+    [SerializeField]
+    private PlayerStatus _playerStatus;
     [Networked] private TickTimer callTime { get; set; }
     void Start()
     {
@@ -33,6 +36,14 @@ public class GunBase : NetworkBehaviour
         _playerFire = gameObject.transform.root.GetComponent<PlayerFire>();
         _playerFire.setGunBase(this);
         _currentAmmo = ammo;
+
+        _playerStatus.useEMP
+            .Where(value => value)
+            .Subscribe(_ =>
+            {
+                ChangeMaxAmmo(-1);
+                Debug.Log("ç≈ëÂíiêîÇàÍÇ¬å∏è≠");
+            }).AddTo(this);
     }
     public void OpenFire()
     {
@@ -44,16 +55,21 @@ public class GunBase : NetworkBehaviour
         _networkFPSController.OnFireReleased();
     }
 
+
+    public void ChangeMaxAmmo(int value)
+    {
+        ammo -= value;
+    }
     public override void FixedUpdateNetwork()
     {
         if (HasInputAuthority)
         {
             if(_isFire && callTime.ExpiredOrNotRunning(Runner))
             {
-                InstanceBulletPrefab();
-                _currentAmmo--;
                 if (_currentAmmo > 0)
                 {
+                    InstanceBulletPrefab();
+                    _currentAmmo--;
                     _networkFPSController.Fire();
                     callTime = TickTimer.CreateFromSeconds(Runner, 60 / fireRate);
                 }
@@ -61,7 +77,8 @@ public class GunBase : NetworkBehaviour
                 {
                     _networkFPSController.OnFireReleased();
                     callTime = TickTimer.CreateFromSeconds(Runner, reloadTime);
-                    _currentAmmo = ammo;
+                    Debug.Log("ÉäÉçÅ[ÉhÇÕÇµÇ‹ÇπÇÒÇ≈ÇµÇΩ");
+                    //_currentAmmo = ammo;
                 }
             }
         }
