@@ -3952,6 +3952,7 @@ MonoBehaviour:
   _bulletPrefab: {fileID: 6553623735259241528, guid: 08fc1632e95b4004884d9cf7d7cd66ac, type: 3}
   bulletSpeed: 40
   _networkFPSController: {fileID: 3590755197599565692}
+  _playerStatus: {fileID: 3754977135402090887}
 --- !u!114 &6789479244145498518
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4064,6 +4065,7 @@ MonoBehaviour:
   _bulletPrefab: {fileID: 6553623735259241528, guid: 08fc1632e95b4004884d9cf7d7cd66ac, type: 3}
   bulletSpeed: 40
   _networkFPSController: {fileID: 3590755197599565692}
+  _playerStatus: {fileID: 3754977135402090887}
 --- !u!114 &5029934749534865241
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4176,6 +4178,10 @@ PrefabInstance:
       propertyPath: bulletSpeed
       value: 80
       objectReference: {fileID: 0}
+    - target: {fileID: 7076253000451218431, guid: b943a6c25011e124cbaf9f11eae5af44, type: 3}
+      propertyPath: _playerStatus
+      value: 
+      objectReference: {fileID: 3754977135402090887}
     - target: {fileID: 7076253000451218431, guid: b943a6c25011e124cbaf9f11eae5af44, type: 3}
       propertyPath: _networkFPSController
       value: 
@@ -4376,6 +4382,7 @@ MonoBehaviour:
   _bulletPrefab: {fileID: 6553623735259241528, guid: 08fc1632e95b4004884d9cf7d7cd66ac, type: 3}
   bulletSpeed: 40
   _networkFPSController: {fileID: 3590755197599565692}
+  _playerStatus: {fileID: 3754977135402090887}
 --- !u!4 &6489848514797809476 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1122128773136177003, guid: 0fea6d667ca57724f97d5e419d00cbac, type: 3}

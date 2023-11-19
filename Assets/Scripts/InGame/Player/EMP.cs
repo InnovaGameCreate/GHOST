@@ -10,14 +10,17 @@ namespace InGame.Player
         PlayerStatus _playerStatus;
         void Update()
         {
-            if(Input.GetKeyDown(KeyCode.Mouse2))
+            if(Input.GetKeyDown(KeyCode.Mouse2) || Input.GetKeyDown(KeyCode.T))
             {
-                _playerStatus.UseEMP(true);
+                StartCoroutine(EMPFinish());
             }
-            else if (Input.GetKeyUp(KeyCode.Mouse2))
-            {
-                _playerStatus.UseEMP(false);
-            }
+        }
+
+        IEnumerator EMPFinish()
+        {
+            _playerStatus.UseEMP(true);
+            yield return new WaitForSeconds(5);
+            _playerStatus.UseEMP(false);
         }
     }
 }

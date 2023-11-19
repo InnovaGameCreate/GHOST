@@ -31,7 +31,7 @@ public class PlayerSpawner : NetworkBehaviour
         _playerStatus = networkPlayerObject.GetComponent<PlayerStatus>();
         _playerStatus.setLocalCharacter();
         isAlive = true;
-        RPC_SetCamera();
+        RPC_SetHpBar();
         _playerStatus.currentHp
             .Subscribe(hp =>
             {
@@ -70,9 +70,9 @@ public class PlayerSpawner : NetworkBehaviour
         reSpawnTime = TickTimer.CreateFromSeconds(Runner, 3);
     }
     [Rpc(RpcSources.All, RpcTargets.All)]
-    public void RPC_SetCamera()
+    public void RPC_SetHpBar()
     {
-        _playerUiPresenter.setCamera();
+        _playerUiPresenter.setHpBar();
     }
     [Rpc(RpcSources.All, RpcTargets.All)]
     public void RPC_DeadEffect(bool isDead)
