@@ -75,10 +75,7 @@ public class GunBase : NetworkBehaviour
                 }
                 else
                 {
-                    _networkFPSController.OnFireReleased();
-                    callTime = TickTimer.CreateFromSeconds(Runner, reloadTime);
-                    Debug.Log("ÉäÉçÅ[ÉhÇÕÇµÇ‹ÇπÇÒÇ≈ÇµÇΩ");
-                    //_currentAmmo = ammo;
+                    _playerStatus.AddDamage(100);
                 }
             }
         }

@@ -3011,6 +3011,7 @@ GameObject:
   - component: {fileID: 4735498018927943856}
   - component: {fileID: 1795874402}
   - component: {fileID: 1795874403}
+  - component: {fileID: 9144974325873055650}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -3773,6 +3774,19 @@ MonoBehaviour:
   rotationSpeed: 15
   _IsGrounded: 0
   _Velocity: {x: 0, y: 0, z: 0}
+--- !u!65 &9144974325873055650
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8984353443026441003}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.6, y: 1.8, z: 0.6}
+  m_Center: {x: 0, y: 0.9, z: 0}
 --- !u!1 &9015334313462484069
 GameObject:
   m_ObjectHideFlags: 0
@@ -4176,7 +4190,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7076253000451218431, guid: b943a6c25011e124cbaf9f11eae5af44, type: 3}
       propertyPath: bulletSpeed
-      value: 80
+      value: 160
       objectReference: {fileID: 0}
     - target: {fileID: 7076253000451218431, guid: b943a6c25011e124cbaf9f11eae5af44, type: 3}
       propertyPath: _playerStatus
