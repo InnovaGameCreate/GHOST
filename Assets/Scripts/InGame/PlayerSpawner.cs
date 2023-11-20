@@ -13,6 +13,7 @@ public class PlayerSpawner : NetworkBehaviour
     PlayerStatus _playerStatus;
     [Networked] private TickTimer reSpawnTime { get; set; }
     [Networked] private TickTimer despawnTime { get; set; }
+    [Networked] private TickTimer setHpBarTime { get; set; }
     NetworkObject networkPlayerObject;
     private SpawnPoint _spawnPoint;
     private bool isAlive = false;
@@ -31,7 +32,6 @@ public class PlayerSpawner : NetworkBehaviour
         _playerStatus = networkPlayerObject.GetComponent<PlayerStatus>();
         _playerStatus.setLocalCharacter();
         isAlive = true;
-        RPC_SetHpBar();
         _playerStatus.currentHp
             .Subscribe(hp =>
             {
@@ -56,7 +56,13 @@ public class PlayerSpawner : NetworkBehaviour
             {
                 RPC_DeadEffect(false);
                 Spawn();
+                setHpBarTime = TickTimer.CreateFromSeconds(Runner, 1);
                 reSpawnTime = TickTimer.None;
+            }
+            if (setHpBarTime.Expired(Runner) && !isAlive)
+            {
+                RPC_SetHpBar();
+                setHpBarTime = TickTimer.None;
             }
         }
     }
