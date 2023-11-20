@@ -3156,9 +3156,9 @@ MonoBehaviour:
   sensitivity: 2
   freeLookAngle: {x: 60, y: 60}
   curveLocomotionSmoothing: 2
-  moveSmoothing: 10
-  sprintSpeed: 3
-  walkingSpeed: 2
+  moveSmoothing: 20
+  sprintSpeed: 2
+  walkingSpeed: 1
   crouchSpeed: 1
   crouchRatio: 0.5
   weapons:

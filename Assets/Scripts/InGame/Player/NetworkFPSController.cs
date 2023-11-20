@@ -295,6 +295,7 @@ namespace InGame.Player
             _playerManager.SetActionState(FPSActionState.None);
 
             recoilComponent.Stop();
+            Debug.Log("SPEEDUP");
 
             speed = sprintSpeed;
         }
@@ -309,6 +310,7 @@ namespace InGame.Player
             adsLayer.SetLayerAlpha(1f);
             movementState = FPSMovementState.Walking;
 
+            Debug.Log("SPEEDDOWN");
             speed = walkingSpeed;
         }
 
@@ -402,6 +404,7 @@ namespace InGame.Player
 
             if (Input.GetKeyDown(KeyCode.LeftShift))
             {
+                Debug.Log("DASH");
                 SprintPressed();
             }
 
@@ -637,7 +640,9 @@ namespace InGame.Player
 
             if (Input.GetKey(KeyCode.D))
                 velocity += transform.right;
+
             velocity = velocity.normalized;
+            Vector3 nonVelocity = velocity;
 
             _playerManager.SetMoveInput(new Vector2(velocity.x, velocity.y));
 
@@ -647,7 +652,7 @@ namespace InGame.Player
             Vector2 normInput = new Vector2(velocity.x, velocity.y);
             normInput.Normalize();
 
-            if ((IsZero(normInput.y) || !IsZero(normInput.x))
+            if (velocity.Equals(Vector3.zero)
                 && movementState == FPSMovementState.Sprinting)
             {
                 SprintReleased();
@@ -660,6 +665,7 @@ namespace InGame.Player
             }
 
             _smoothMove = FPSAnimLib.ExpDecay(_smoothMove, normInput, moveSmoothing, Time.deltaTime);
+            _smoothMove = nonVelocity;//ï‚ê≥Ç»ÇµÇÃà⁄ìÆä÷êî
             velocity.x = _smoothMove.x;
             velocity.y = _smoothMove.y;
 
@@ -683,9 +689,10 @@ namespace InGame.Player
                 verticalVelocity -= gravity * Time.deltaTime;
                 verticalVelocity = Mathf.Max(-30f, verticalVelocity);
             }
-
+            velocity = velocity * speed;
             velocity.y = verticalVelocity;
-            netWorkcontroller.Move(velocity * speed );
+            Debug.Log($"velocity = {velocity}");
+            netWorkcontroller.Move(velocity);
 
             bool bWasInAir = _isInAir;
             _isInAir = !controller.isGrounded;

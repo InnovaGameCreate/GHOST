@@ -89,7 +89,7 @@ public class NetworkCharacterControllerPrototype : NetworkTransform {
         var previousPos = transform.position;
         var moveVelocity = Velocity;
 
-        direction = direction.normalized;
+        //direction = direction.normalized;
 
         if (IsGrounded && moveVelocity.y < 0)
         {
