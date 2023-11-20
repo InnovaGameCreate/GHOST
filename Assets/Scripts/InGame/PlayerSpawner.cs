@@ -25,6 +25,7 @@ public class PlayerSpawner : NetworkBehaviour
         _runner = runner;
         _playerPref = playerPre;
         Spawn();
+        setHpBarTime = TickTimer.CreateFromSeconds(Runner, 3);
     }
     private void Spawn()
     {
@@ -59,7 +60,7 @@ public class PlayerSpawner : NetworkBehaviour
                 setHpBarTime = TickTimer.CreateFromSeconds(Runner, 1);
                 reSpawnTime = TickTimer.None;
             }
-            if (setHpBarTime.Expired(Runner) && !isAlive)
+            if (setHpBarTime.Expired(Runner))
             {
                 RPC_SetHpBar();
                 setHpBarTime = TickTimer.None;

@@ -33,18 +33,22 @@ public class Bullet : NetworkBehaviour
             Runner.Despawn(_networkObject);
         }
     }
-
-    private void OnTriggerEnter(Collider coll)
+    private void OnTriggerStay(Collider coll)
     {
         if (!HasStateAuthority) return;
+        Debug.Log("return");
         if (coll.CompareTag("Player"))
         {
+            Debug.Log("coll.CompareTag(Player)");
             if (coll.TryGetComponent(out NetworkObject nerwork))
             {
+                Debug.Log("coll.TryGetComponent(out NetworkObject nerwork)");
                 if (!nerwork.HasStateAuthority)
                 {
+                    Debug.Log("!nerwork.HasStateAuthority");
                     if (coll.TryGetComponent(out IDamageable damageable))
                     {
+                        Debug.Log("coll.TryGetComponent(out IDamageable damageable)");
                         damageable.AddDamage(damage);
                     }
                 }                

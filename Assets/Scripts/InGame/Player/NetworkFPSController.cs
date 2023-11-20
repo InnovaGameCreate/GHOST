@@ -691,7 +691,6 @@ namespace InGame.Player
             }
             velocity = velocity * speed;
             velocity.y = verticalVelocity;
-            Debug.Log($"velocity = {velocity}");
             netWorkcontroller.Move(velocity);
 
             bool bWasInAir = _isInAir;
