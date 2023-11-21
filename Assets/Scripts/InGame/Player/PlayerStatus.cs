@@ -52,4 +52,8 @@ public class PlayerStatus : MonoBehaviour, IDamageable
         Debug.Log($"UseEMP{useValue}");
     }
 
+    public float GetCurrentHp()
+    {
+        return _currentHp.Value;
+    }
 }
