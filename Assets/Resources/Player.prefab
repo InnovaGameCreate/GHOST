@@ -845,6 +845,7 @@ GameObject:
   - component: {fileID: 2993326636862999583}
   - component: {fileID: 2993326636862999582}
   - component: {fileID: 6370441970156737325}
+  - component: {fileID: 8145206707243539548}
   - component: {fileID: 753429832247979483}
   m_Layer: 4
   m_Name: Camera
@@ -935,6 +936,26 @@ MonoBehaviour:
   rootBone: {fileID: 0}
   isAiming: 0
   useViewLimits: 0
+--- !u!114 &8145206707243539548
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2993326636862999579}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 433faa8b758afed4f9295b193c697276, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _ColorEmulationMode: 3
+  _FullscreenColorDepth: {x: 256, y: 256, z: 256}
+  _FullscreenDitherDepth: {x: 32, y: 32, z: 32}
+  _DitheringMatrixSize: 2
+  _InterlacingSize: 1
+  _PostProcessShader: {fileID: 4800000, guid: 56d52fd5b7c6911468179e5a7359ce0e, type: 3}
+  _PostProcessShaderAccurate: {fileID: 4800000, guid: 2ebed186567d3c244a87538744a62920, type: 3}
+  _InterlacingShader: {fileID: 4800000, guid: 03ebd34214b41ef459d7ee6753b062be, type: 3}
 --- !u!114 &753429832247979483
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3154,6 +3175,7 @@ GameObject:
   - component: {fileID: 1795874402}
   - component: {fileID: 1795874403}
   - component: {fileID: 9144974325873055650}
+  - component: {fileID: 2023955307394829859}
   m_Layer: 8
   m_Name: Player
   m_TagString: Player
@@ -3929,6 +3951,28 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.6, y: 1.8, z: 0.6}
   m_Center: {x: 0, y: 0.9, z: 0}
+--- !u!114 &2023955307394829859
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8984353443026441003}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c507a7fd81ec8974cbaf992737537cca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  walkSounds:
+  - {fileID: 8300000, guid: 2a6ae25c9ca58544e8c0ea16b3d1b0fb, type: 3}
+  - {fileID: 8300000, guid: 8626921a4a8393749b93c2c7346fcc59, type: 3}
+  runSounds:
+  - {fileID: 8300000, guid: 2a6ae25c9ca58544e8c0ea16b3d1b0fb, type: 3}
+  - {fileID: 8300000, guid: 8626921a4a8393749b93c2c7346fcc59, type: 3}
+  - {fileID: 8300000, guid: 18ed1c56140166045b09ddbe53adfc34, type: 3}
+  - {fileID: 8300000, guid: 272548bdb287c204cba5826615476da5, type: 3}
+  walkStepInterval: 0.5
+  runStepInterval: 0.3
 --- !u!1 &9015334313462484069
 GameObject:
   m_ObjectHideFlags: 0
