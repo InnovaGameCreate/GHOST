@@ -11,15 +11,7 @@ public class PistolSounds : MonoBehaviour
         audioSource.clip = shootingSound;
     }
 
-    void Update()
-    {
-        if (Input.GetMouseButtonDown(0)) // 左クリックが押されたら
-        {
-            Shoot();
-        }
-    }
-
-    void Shoot()
+    public void Shoot()
     { 
         // 発射音を再生
         audioSource.Play();

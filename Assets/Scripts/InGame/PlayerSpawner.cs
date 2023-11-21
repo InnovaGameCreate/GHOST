@@ -79,6 +79,11 @@ public class PlayerSpawner : NetworkBehaviour
     [Rpc(RpcSources.All, RpcTargets.All)]
     public void RPC_SetHpBar()
     {
+        if(_playerUiPresenter == null)
+        {
+            _playerUiPresenter = FindObjectOfType<PlayerUiPresenter>();
+        }
+        Debug.Log($"SetHpBar:{HasInputAuthority}{_playerUiPresenter}");
         _playerUiPresenter.setHpBar();
     }
     [Rpc(RpcSources.All, RpcTargets.All)]

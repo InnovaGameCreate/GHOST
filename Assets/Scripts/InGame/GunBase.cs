@@ -23,8 +23,15 @@ public class GunBase : NetworkBehaviour
     [SerializeField]
     NetworkFPSController _networkFPSController;
     [SerializeField]
+    GameObject cameraObject;
+    [SerializeField]
     private PlayerStatus _playerStatus;
+    [SerializeField]
+    LayerMask layerMask;
+    [SerializeField]
+    PistolSounds _sound;
     [Networked] private TickTimer callTime { get; set; }
+    RaycastHit hit;
     void Start()
     {
         if (!HasStateAuthority) return;
@@ -41,7 +48,11 @@ public class GunBase : NetworkBehaviour
             .Where(value => value)
             .Subscribe(_ =>
             {
-                ChangeMaxAmmo(-1);
+                _currentAmmo--;
+                if(_currentAmmo <= 0)
+                {
+                    _playerStatus.AddDamage(100);
+                }
                 Debug.Log("最大段数を一つ減少");
             }).AddTo(this);
     }
@@ -54,12 +65,6 @@ public class GunBase : NetworkBehaviour
         _isFire = false;
         _networkFPSController.OnFireReleased();
     }
-
-
-    public void ChangeMaxAmmo(int value)
-    {
-        ammo -= value;
-    }
     public override void FixedUpdateNetwork()
     {
         if (HasInputAuthority)
@@ -69,6 +74,8 @@ public class GunBase : NetworkBehaviour
                 if (_currentAmmo > 0)
                 {
                     InstanceBulletPrefab();
+                    _sound.Shoot();
+                    HitCheck();
                     _currentAmmo--;
                     _networkFPSController.Fire();
                     callTime = TickTimer.CreateFromSeconds(Runner, 60 / fireRate);
@@ -93,6 +100,31 @@ public class GunBase : NetworkBehaviour
         else
         {
             Debug.LogError("BulletPrefabにBullet.csがアタッチされていません");
+        }
+    }
+    private void HitCheck()
+    {
+        GameObject originObject = cameraObject;
+        Vector3 originPositon = originObject.transform.position;
+        Vector3 direction = originObject.transform.forward;
+        Ray ray = new Ray(originPositon, direction);
+        Debug.DrawRay(originPositon, direction, Color.cyan, 3);
+        if (Physics.Raycast(ray, out hit, Mathf.Infinity, layerMask))
+        {
+            if (hit.collider.TryGetComponent(out NetworkObject nerwork))
+            {
+                if (!nerwork.HasStateAuthority)
+                {
+                    if (hit.collider.TryGetComponent(out IDamageable damageable))
+                    {
+                        damageable.AddDamage(damage);
+                        if(damageable.GetCurrentHp() <= 0)
+                        {
+                            _currentAmmo = _gunData.ammo;
+                        }
+                    }
+                }
+            }
         }
     }
 }
