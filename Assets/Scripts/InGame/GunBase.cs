@@ -14,7 +14,7 @@ public class GunBase : NetworkBehaviour
     private float fireRate;//‚P•ªŠÔ‚É”­Ë‚·‚é’e‚Ì”
     private float reloadTime;//ƒŠƒ[ƒhŠÔ
     private bool _isFire;//e‚ğ‘Å‚Á‚Ä‚¢‚é‚©‚Ç‚¤‚©
-    private int _currentAmmo;//Œ»İ‚Ì’e‚Ì”
+    public int _currentAmmo;//Œ»İ‚Ì’e‚Ì”
     [SerializeField]
     private GameObject _bulletPrefab;
     [SerializeField]
