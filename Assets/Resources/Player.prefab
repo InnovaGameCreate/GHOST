@@ -3175,7 +3175,6 @@ GameObject:
   - component: {fileID: 1795874402}
   - component: {fileID: 1795874403}
   - component: {fileID: 9144974325873055650}
-  - component: {fileID: 2023955307394829859}
   m_Layer: 8
   m_Name: Player
   m_TagString: Player
@@ -3951,28 +3950,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.6, y: 1.8, z: 0.6}
   m_Center: {x: 0, y: 0.9, z: 0}
---- !u!114 &2023955307394829859
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8984353443026441003}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c507a7fd81ec8974cbaf992737537cca, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  walkSounds:
-  - {fileID: 8300000, guid: 2a6ae25c9ca58544e8c0ea16b3d1b0fb, type: 3}
-  - {fileID: 8300000, guid: 8626921a4a8393749b93c2c7346fcc59, type: 3}
-  runSounds:
-  - {fileID: 8300000, guid: 2a6ae25c9ca58544e8c0ea16b3d1b0fb, type: 3}
-  - {fileID: 8300000, guid: 8626921a4a8393749b93c2c7346fcc59, type: 3}
-  - {fileID: 8300000, guid: 18ed1c56140166045b09ddbe53adfc34, type: 3}
-  - {fileID: 8300000, guid: 272548bdb287c204cba5826615476da5, type: 3}
-  walkStepInterval: 0.5
-  runStepInterval: 0.3
 --- !u!1 &9015334313462484069
 GameObject:
   m_ObjectHideFlags: 0
